@@ -1,0 +1,12 @@
+# mysql connect configuration
+mysql:
+  path: '121.37.131.203'
+  port: '3306'
+  config: 'charset=utf8&parseTime=True&loc=Local'
+  db-name: 'zctest_wisdomcms'
+  username: 'zctest_wisdomcms'
+  password: 'jZM84PBwEB7r22MZ'
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: ""
+  log-zap: false
