@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/gob"
+	"fmt"
 	"log"
 	"time"
 )
@@ -40,7 +42,15 @@ func Create(data string, pre []byte) *Block {
 		Hash:       []byte{}, //TODO
 		Data:       []byte(data),
 	}
-	block.SetHash()
+	//创建一个pow对象
+	pow := NewProofOfWork(&block)
+	//查找随机数，进行hash运算
+	hash, nonce := pow.Run()
+	//根据挖矿结果，对区块数据进行更新(补充)
+	block.Hash = hash
+	block.Nonce = nonce
+
+	// block.SetHash()
 	return &block
 }
 
@@ -81,4 +91,26 @@ func Uint64ToByte(num uint64) []byte {
 		log.Panic(err)
 	}
 	return buffer.Bytes()
+}
+
+func (block *Block) Serialize() []byte {
+	var buffer bytes.Buffer
+	encoder := gob.NewEncoder(&buffer)
+	err := encoder.Encode(&block)
+	if err != nil {
+		log.Panic("编码出错")
+	}
+	fmt.Printf("编码后的： %v\n", buffer.Bytes())
+	return buffer.Bytes() //[]byte{}
+}
+func Unserialize(data []byte) Block {
+	//var buffer bytes.Buffer
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	var block Block
+	err := decoder.Decode(&block)
+	if err != nil {
+		log.Panic("编码出错")
+	}
+
+	return block //[]byte{}
 }
